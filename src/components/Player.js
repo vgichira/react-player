@@ -7,7 +7,16 @@ import {
     faAngleLeft,
 } from "@fortawesome/free-solid-svg-icons";
 
-const Player = ({ currentSong: { audio }, isPlaying, setIsPlaying, audioRef, songInfo, setSongInfo }) => {
+const Player = ({ 
+    currentSong, 
+    isPlaying, 
+    setIsPlaying, 
+    audioRef, 
+    songInfo, 
+    setSongInfo, 
+    songs, 
+    setCurrentSong,
+}) => {
     const playSongHandler = () => {
         if (isPlaying) {
             audioRef.current.pause();
@@ -41,6 +50,32 @@ const Player = ({ currentSong: { audio }, isPlaying, setIsPlaying, audioRef, son
         setSongInfo({ ...songInfo, currentTime: event.target.value });
     };
 
+    const skipHandler = (direction) =>{
+        const currentIndex = songs.findIndex(song => song.id === currentSong.id)
+
+        if(direction === "skip-forward"){
+            setCurrentSong(songs[(currentIndex + 1) % songs.length]);
+        }else if(direction === "skip-back"){
+            setCurrentSong(songs[(currentIndex - 1) % songs.length]);
+
+            if (currentIndex === 0){
+                setCurrentSong(songs[songs.length - 1]);
+            }
+        }
+
+        setIsPlaying(isPlaying)
+
+        if(isPlaying){
+            const playPromise = audioRef.current.play()
+
+            if(playPromise !== undefined){
+                playPromise.then(audio => {
+                    audioRef.current.play();
+                })
+            }
+        }
+    }
+
     return (
         <div className="player">
             <div className="time-control">
@@ -59,6 +94,7 @@ const Player = ({ currentSong: { audio }, isPlaying, setIsPlaying, audioRef, son
                     className="skip-back"
                     size="2x"
                     icon={faAngleLeft}
+                    onClick={() => skipHandler("skip-back")}
                 />
                 <FontAwesomeIcon
                     onClick={playSongHandler}
@@ -70,13 +106,14 @@ const Player = ({ currentSong: { audio }, isPlaying, setIsPlaying, audioRef, son
                     className="skip-forward"
                     size="2x"
                     icon={faAngleRight}
+                    onClick={() => skipHandler("skip-forward")}
                 />
             </div>
             <audio
                 onTimeUpdate={timeUpdateHandler}
                 onLoadedMetadata={timeUpdateHandler}
                 ref={audioRef}
-                src={audio}
+                src={currentSong.audio}
             ></audio>
         </div>
     );
