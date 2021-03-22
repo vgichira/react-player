@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faPlay,
@@ -16,7 +16,30 @@ const Player = ({
     setSongInfo, 
     songs, 
     setCurrentSong,
+    setSongs
 }) => {
+    // useEffect
+
+    useEffect(() => {
+        const newSongs = songs.map(song => {
+            if(song.id === currentSong.id){
+                return {
+                    ...song,
+                    active: true,
+                }
+            }else{
+                return {
+                    ...song, 
+                    active: false,
+                }
+            }
+        })
+
+        setSongs(newSongs)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentSong])
+
+    // Event Handlers
     const playSongHandler = () => {
         if (isPlaying) {
             audioRef.current.pause();
@@ -58,7 +81,9 @@ const Player = ({
         }else if(direction === "skip-back"){
             setCurrentSong(songs[(currentIndex - 1) % songs.length]);
 
-            if (currentIndex === 0){
+            console.log(currentIndex);
+
+            if (currentIndex === 1){
                 setCurrentSong(songs[songs.length - 1]);
             }
         }
