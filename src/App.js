@@ -12,12 +12,16 @@ function App() {
     const [songs, setSongs] = useState(data());
     const [currentSong, setCurrentSong] = useState(songs[0]);
     const [isPlaying, setIsPlaying] = useState(false);
-    const [songInfo, setSongInfo] = useState(null);
+    const [songInfo, setSongInfo] = useState({
+        currentTime:0,
+        duration:0,
+        animationPercentage:0
+    });
     const [libraryActive, setLibraryActive] = useState(false);
     const audioRef = useRef(null);
 
     return (
-        <div className="App">
+        <div className={`App ${libraryActive ? "active-library" : ""}`}>
             <Nav 
                 libraryActive={libraryActive} 
                 setLibraryActive={setLibraryActive}
