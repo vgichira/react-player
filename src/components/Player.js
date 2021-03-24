@@ -43,6 +43,7 @@ const Player = ({
         } else {
             audioRef.current.play();
         }
+        
         setIsPlaying(!isPlaying);
     };
 
@@ -74,7 +75,7 @@ const Player = ({
         setSongInfo({ ...songInfo, currentTime: event.target.value });
     };
 
-    const skipHandler = async (direction) =>{
+    const skipHandler = async (direction) => {
         const currentIndex = songs.findIndex(song => song.id === currentSong.id)
 
         if(direction === "skip-forward"){
